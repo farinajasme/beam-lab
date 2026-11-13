@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BIB2017 Beam Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: drafting-sheet tool. Controls rail on the left, the free body diagram and working on the right; stacks on phones. */
+:root {
+  --paper: #f3f5f7;
+  --sheet: #ffffff;
+  --ink: #14213d;
+  --ink-soft: #4a5568;
+  --rule: #d5dce5;
+  --grid: #e8edf2;
+  --navy: #002060;
+  --load: #c0392b;
+  --react: #1b8a3a;
+  --dim: #2563eb;
+  --beam: #c9d3e3;
+  --warn-bg: #fff4e5;
+  --warn-ink: #8a4b00;
+  --bad-bg: #fdecea;
+  --bad-ink: #9b1c1c;
+  --good-bg: #e8f5ec;
+  --good-ink: #1b6b33;
+  --field: #f7f9fb;
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
+  --font-body: "Barlow", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1622; --sheet: #172131; --ink: #e6ecf5; --ink-soft: #a9b6c8; --rule: #2c3a50; --grid: #1f2b3d;
+    --navy: #9cb8ff; --load: #ff7b6b; --react: #4fd27a; --dim: #7fb0ff; --beam: #34445e;
+    --warn-bg: #3a2a12; --warn-ink: #ffcf8a; --bad-bg: #3d1a1a; --bad-ink: #ffb4ab; --good-bg: #133222; --good-ink: #8fe3a9;
+    --field: #111a28; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1622; --sheet: #172131; --ink: #e6ecf5; --ink-soft: #a9b6c8; --rule: #2c3a50; --grid: #1f2b3d;
+  --navy: #9cb8ff; --load: #ff7b6b; --react: #4fd27a; --dim: #7fb0ff; --beam: #34445e;
+  --warn-bg: #3a2a12; --warn-ink: #ffcf8a; --bad-bg: #3d1a1a; --bad-ink: #ffb4ab; --good-bg: #133222; --good-ink: #8fe3a9;
+  --field: #111a28; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+}
+.wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+header h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); line-height: 1.05; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--ink-soft); max-width: 62ch; }
+.course { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.example-pick { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.grid { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.panel h2 { font-family: var(--font-display); font-size: 20px; margin: 0; letter-spacing: 0.02em; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+input, select, button { font: inherit; color: var(--ink); }
+input[type=number], select {
+  background: var(--field); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; width: 100%; min-width: 0;
+  font-family: var(--font-mono); font-size: 14px;
+}
+select { font-family: var(--font-body); font-size: 15px; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--dim); outline-offset: 2px; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sup { border: 1px solid var(--rule); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.sup-head { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.badge { font-family: var(--font-mono); font-size: 12px; background: var(--grid); border-radius: 4px; padding: 1px 6px; }
+.load { border: 1px solid var(--rule); border-left: 4px solid var(--load); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.load-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; color: var(--load); }
+.btn { border: 1px solid var(--rule); background: var(--field); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.btn:hover { border-color: var(--ink-soft); }
+.btn.primary { background: var(--navy); color: var(--sheet); border-color: var(--navy); }
+.btn.small { padding: 3px 8px; font-size: 12px; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--navy); }
+.status { border-radius: 8px; padding: 10px 14px; font-weight: 600; display: flex; flex-direction: column; gap: 2px; }
+.status small { font-weight: 400; }
+.status.ok { background: var(--good-bg); color: var(--good-ink); }
+.status.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.status.bad { background: var(--bad-bg); color: var(--bad-ink); }
+.figure { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
+.figure svg { display: block; width: 100%; min-width: 680px; height: auto; }
+.answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.ans { border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.ans .k { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+.ans .v { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--react); font-variant-numeric: tabular-nums; }
+.ans .d { font-size: 13px; color: var(--ink-soft); }
+.ans input { margin-top: 4px; }
+.ans .mark { font-size: 13px; font-weight: 700; }
+.ans .mark.right { color: var(--good-ink); }
+.ans .mark.wrong { color: var(--bad-ink); }
+.steps { display: flex; flex-direction: column; gap: 14px; }
+.step { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; }
+.step .n { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--sheet); display: grid; place-items: center; font-weight: 700; font-family: var(--font-mono); font-size: 13px; }
+.step h3 { margin: 2px 0 4px; font-size: 16px; }
+.step p { margin: 0 0 6px; color: var(--ink-soft); max-width: 70ch; }
+.eq { font-family: var(--font-mono); font-size: 14px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; overflow-x: auto; white-space: pre; line-height: 1.6; }
+.eq b { color: var(--react); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-soft); }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: currentColor; }
+.legend .l { color: var(--load); } .legend .r { color: var(--react); } .legend .d { color: var(--dim); }
+.note { font-size: 13px; color: var(--ink-soft); }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .15s; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="course">BIB2017 Structural Principle · Beam reactions</div>
+      <h1>Beam Lab</h1>
+      <p>Change the supports and loads, then see the reactions and the full working. Turn on “Quiz me” to try it yourself first.</p>
+    </div>
+    <div class="example-pick">
+      <label for="example">Start from a tutorial question</label>
+      <select id="example"></select>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- CONTROLS -->
+    <section class="panel" aria-label="Beam set-up">
+      <div class="field">
+        <span class="eyebrow">1 · Beam</span>
+        <label for="L">Length of the beam (m)</label>
+        <input id="L" type="number" min="1" max="40" step="0.5">
+      </div>
+
+      <div class="field">
+        <span class="eyebrow">2 · Supports</span>
+        <div id="supports" class="steps" style="gap:10px"></div>
+        <p class="note">Positions are measured in metres from the left end of the beam.</p>
+      </div>
+
+      <div class="field">
+        <span class="eyebrow">3 · Loads</span>
+        <div id="loads" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div class="btn-row">
+          <button class="btn" id="addPoint" type="button">+ Point load</button>
+          <button class="btn" id="addUdl" type="button">+ Spread load (UDL)</button>
+          <button class="btn" id="addMoment" type="button">+ Twist (couple)</button>
+        </div>
+        <p class="note">Point load angle: 0° is straight down. Positive tilts the push to the right, negative to the left. A 3-4-5 slope with the steep side vertical is 36.87°.</p>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="panel" aria-label="Results">
+      <div class="toggles">
+        <label class="toggle"><input type="checkbox" id="quiz"> Quiz me (hide the answers)</label>
+        <label class="toggle"><input type="checkbox" id="diag"> Show shear force and bending moment (Week 8)</label>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <div>
+        <div class="figure" id="fbd"></div>
+        <div class="legend" style="margin-top:8px"><span class="l">Loads you set</span><span class="r">Reactions (worked out)</span><span class="d">Distances</span></div>
+      </div>
+
+      <div>
+        <h2 style="margin-bottom:10px">Reactions</h2>
+        <div class="answers" id="answers"></div>
+        <div class="btn-row" id="quizBtns" style="margin-top:10px" hidden>
+          <button class="btn primary" type="button" id="checkBtn">Check my answers</button>
+          <button class="btn" type="button" id="revealBtn">Show the working</button>
+        </div>
+        <p class="note" id="quizNote" hidden>Type each answer with its sign: up is +, right is +, anticlockwise is +. Answers within 1% count as right.</p>
+      </div>
+
+      <div id="diagrams" hidden>
+        <h2 style="margin-bottom:10px">Shear force and bending moment</h2>
+        <div class="figure" id="sfd"></div>
+        <div class="figure" id="bmd" style="margin-top:10px"></div>
+        <p class="note">Sign rule for these diagrams: shear is + when the left part is pushed up; bending moment is + when the beam sags (smiles).</p>
+      </div>
+
+      <div id="workingWrap">
+        <h2 style="margin-bottom:10px">Working, step by step</h2>
+        <div class="steps" id="working"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const SUP = { none: { label: 'None', r: 0 }, pin: { label: 'Pin', r: 2 }, roller: { label: 'Roller', r: 1 }, fixed: { label: 'Fixed (wall)', r: 3 } };
+
+  const EXAMPLES = [
+    { name: 'Simply supported, one load (P1)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 24, x: 3, ang: 0 }] },
+    { name: 'Overhangs both ends (21A-2)', L: 14, sup: [{ type: 'pin', x: 2 }, { type: 'roller', x: 12 }], loads: [{ kind: 'point', P: 4, x: 0, ang: 0 }, { kind: 'point', P: 18, x: 6, ang: 0 }, { kind: 'point', P: 10, x: 9, ang: 0 }, { kind: 'point', P: 8, x: 14, ang: 0 }] },
+    { name: 'Spread load and overhang (P3)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 6 }], loads: [{ kind: 'udl', w: 3, a: 0, b: 6 }, { kind: 'point', P: 10, x: 8, ang: 0 }] },
+    { name: 'Slanted 3-4-5 load (21B-A)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 25, x: 3, ang: 36.87 }, { kind: 'point', P: 10, x: 5, ang: 0 }] },
+    { name: 'Cantilever with slanted load (21B-B)', L: 4, sup: [{ type: 'fixed', x: 0 }, { type: 'none', x: 4 }], loads: [{ kind: 'point', P: 6, x: 2, ang: 0 }, { kind: 'point', P: 15, x: 4, ang: 36.87 }] },
+    { name: 'Beam with a twist (Q6)', L: 10, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 10 }], loads: [{ kind: 'moment', M: 20, x: 4, dir: 'cw' }, { kind: 'point', P: 8, x: 6, ang: 0 }] },
+    { name: 'Steep 5-12-13 load (Q7)', L: 9, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 9 }], loads: [{ kind: 'point', P: 26, x: 3, ang: 22.62 }] },
+  ];
+
+  let state = clone(EXAMPLES[0]);
+  let quizRevealed = false;
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  const f = (n, d = 2) => {
+    if (!isFinite(n)) return '–';
+    const v = Math.abs(n) < 5e-10 ? 0 : n;
+    return parseFloat(v.toFixed(d)).toString();
+  };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ---------- controls ----------
+  function buildExamples() {
+    const sel = $('example');
+    sel.innerHTML = '<option value="">Choose an example…</option>' + EXAMPLES.map((e, i) => `<option value="${i}">${esc(e.name)}</option>`).join('');
+    sel.addEventListener('change', () => { if (sel.value !== '') { state = clone(EXAMPLES[+sel.value]); quizRevealed = false; renderControls(); update(); } });
+  }
+
+  function num(v, fallback = 0) { const n = parseFloat(v); return isFinite(n) ? n : fallback; }
+
+  function renderControls() {
+    $('L').value = state.L;
+    const sh = state.sup.map((s, i) => `
+      <div class="sup">
+        <div class="sup-head"><span class="badge">${i === 0 ? 'A' : 'B'}</span> Support ${i === 0 ? 'A' : 'B'}</div>
+        <div class="row">
+          <div class="field"><label for="st${i}">Type</label>
+            <select id="st${i}" data-i="${i}" data-k="type">${Object.entries(SUP).map(([k, v]) => `<option value="${k}" ${s.type === k ? 'selected' : ''}>${v.label}</option>`).join('')}</select></div>
+          <div class="field"><label for="sx${i}">Position (m)</label>
+            <input id="sx${i}" type="number" step="0.5" min="0" data-i="${i}" data-k="x" value="${s.x}"></div>
+        </div>
+      </div>`).join('');
+    $('supports').innerHTML = sh;
+    $('supports').querySelectorAll('select,input').forEach((el) => el.addEventListener('input', () => {
+      const s = state.sup[+el.dataset.i];
+      s[el.dataset.k] = el.dataset.k === 'x' ? num(el.value) : el.value;
+      quizRevealed = false; update();
+    }));
+
+    $('loads').innerHTML = state.loads.map((l, i) => {
+      let body = '', title = '';
+      if (l.kind === 'point') {
+        title = `Point load ${i + 1}`;
+        body = `<div class="row">
+          ${fld(i, 'P', 'Size (kN)', l.P, 0.5)}${fld(i, 'x', 'Position (m)', l.x, 0.5)}${fld(i, 'ang', 'Angle (°)', l.ang, 1)}</div>`;
+      } else if (l.kind === 'udl') {
+        title = `Spread load ${i + 1}`;
+        body = `<div class="row">${fld(i, 'w', 'kN per m', l.w, 0.5)}${fld(i, 'a', 'From (m)', l.a, 0.5)}${fld(i, 'b', 'To (m)', l.b, 0.5)}</div>`;
+      } else {
+        title = `Twist ${i + 1}`;
+        body = `<div class="row">${fld(i, 'M', 'Size (kN·m)', l.M, 1)}${fld(i, 'x', 'Position (m)', l.x, 0.5)}
+          <div class="field"><label for="ld${i}">Direction</label><select id="ld${i}" data-i="${i}" data-k="dir">
+            <option value="cw" ${l.dir === 'cw' ? 'selected' : ''}>Clockwise ↻</option><option value="ccw" ${l.dir === 'ccw' ? 'selected' : ''}>Anticlockwise ↺</option></select></div></div>`;
+      }
+      return `<div class="load"><div class="load-head"><span>${title}</span><button class="btn small" type="button" data-del="${i}" aria-label="Remove ${title}">Remove</button></div>${body}</div>`;
+    }).join('') || '<p class="note">No loads yet. Add one below.</p>';
+    $('loads').querySelectorAll('input,select').forEach((el) => el.addEventListener('input', () => {
+      const l = state.loads[+el.dataset.i];
+      l[el.dataset.k] = el.tagName === 'SELECT' ? el.value : num(el.value);
+      quizRevealed = false; update();
+    }));
+    $('loads').querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => {
+      state.loads.splice(+b.dataset.del, 1); renderControls(); update();
+    }));
+  }
+  function fld(i, k, lab, v, step) {
+    return `<div class="field"><label for="l${k}${i}">${lab}</label><input id="l${k}${i}" type="number" step="${step}" data-i="${i}" data-k="${k}" value="${v}"></div>`;
+  }
+
+  // ---------- mechanics ----------
+  // Convert every load into point forces (Fx, Fy at x) and couples (C, anticlockwise +).
+  function resolveLoads(L) {
+    const forces = [], couples = [], notes = [];
+    state.loads.forEach((l, i) => {
+      if (l.kind === 'point') {
+        const t = l.ang * Math.PI / 180;
+        const Fx = l.P * Math.sin(t), Fy = -l.P * Math.cos(t);
+        forces.push({ x: l.x, Fx, Fy, src: l, name: `${f(l.P)} kN` });
+      } else if (l.kind === 'udl') {
+        const a = Math.min(l.a, l.b), b = Math.max(l.a, l.b);
+        const W = l.w * (b - a);
+        forces.push({ x: (a + b) / 2, Fx: 0, Fy: -W, src: l, name: `spread load (${f(W)} kN)` });
+      } else {
+        couples.push({ x: l.x, C: l.dir === 'ccw' ? l.M : -l.M, src: l });
+      }
+    });
+    return { forces, couples };
+  }
+
+  function analyse() {
+    const L = Math.max(0.5, num(state.L, 1));
+    const sups = state.sup.map((s, i) => ({ ...s, name: i === 0 ? 'A' : 'B' })).filter((s) => s.type !== 'none');
+    const r = sups.reduce((t, s) => t + SUP[s.type].r, 0);
+    const res = { L, sups, r, ok: false, status: '', detail: '', kind: 'bad' };
+    const outside = sups.find((s) => s.x < 0 || s.x > L);
+    const loadOutside = state.loads.some((l) => (l.kind === 'udl' ? (Math.min(l.a, l.b) < 0 || Math.max(l.a, l.b) > L) : (l.x < 0 || l.x > L)));
+    if (outside) { res.status = 'A support is off the beam.'; res.detail = `Support ${outside.name} is at ${f(outside.x)} m, but the beam runs from 0 to ${f(L)} m.`; return res; }
+    if (loadOutside) { res.status = 'A load is off the beam.'; res.detail = `Every load must sit between 0 and ${f(L)} m.`; return res; }
+    const { forces, couples } = resolveLoads(L);
+    res.forces = forces; res.couples = couples;
+    const sumFx = forces.reduce((t, F) => t + F.Fx, 0);
+
+    // determinacy and stability
+    const types = sups.map((s) => s.type).sort().join('+');
+    if (r < 3 || types === 'roller+roller') {
+      res.kind = 'bad';
+      res.status = r === 0 ? 'No supports: the beam would fall.' : 'Unstable: it would move.';
+      if (types === 'roller+roller') res.detail = 'Two rollers can only push up and down. Nothing stops the beam sliding sideways. Change one roller to a pin.';
+      else if (r > 0) res.detail = `Unknowns r = ${r}, but statics has 3 rules. Not enough support. Add a support or use a fixed support.`;
+      return res;
+    }
+    if (sups.length === 2 && Math.abs(sups[0].x - sups[1].x) < 1e-9) { res.status = 'Both supports are at the same spot.'; res.detail = 'Move one of them. Two supports at one point cannot stop the beam spinning.'; return res; }
+    if (r > 3) {
+      res.kind = 'warn';
+      res.status = `Indeterminate (D = ${r - 3}): statics alone cannot solve this.`;
+      res.detail = `Unknowns r = ${r}, but statics has only 3 rules (no sliding, no lifting, no spinning). You learn how to solve these in later courses. Try a pin + roller, or a single fixed support.`;
+      return res;
+    }
+    // r === 3: pin+roller or fixed alone
+    res.ok = true; res.kind = 'ok';
+    res.status = 'Determinate: statics can solve it.';
+    res.detail = types === 'fixed' ? 'Unknowns r = 3 (the wall pushes sideways, pushes up, and twists back). Rules = 3.' : 'Unknowns r = 3 (pin 2 + roller 1). Rules = 3. The roller pushes up and down only, so the pin takes all the sideways push.';
+    const R = [];
+    if (types === 'fixed') {
+      const s = sups[0];
+      const H = -sumFx;
+      const V = -forces.reduce((t, F) => t + F.Fy, 0);
+      const M = -(forces.reduce((t, F) => t + F.Fy * (F.x - s.x), 0) + couples.reduce((t, c) => t + c.C, 0));
+      R.push({ key: 'H' + s.name, sym: `H${s.name}`, val: H, x: s.x, dirn: 'h' }, { key: 'V' + s.name, sym: `V${s.name}`, val: V, x: s.x, dirn: 'v' }, { key: 'M' + s.name, sym: `M${s.name}`, val: M, x: s.x, dirn: 'm' });
+      res.fixed = s;
+    } else {
+      const pin = sups.find((s) => s.type === 'pin'), rol = sups.find((s) => s.type === 'roller');
+      const H = -sumFx;
+      const span = rol.x - pin.x;
+      const mLoads = forces.reduce((t, F) => t + F.Fy * (F.x - pin.x), 0) + couples.reduce((t, c) => t + c.C, 0);
+      const Vr = -mLoads / span;
+      const Vp = -forces.reduce((t, F) => t + F.Fy, 0) - Vr;
+      const first = sups[0];
+      R.push({ key: 'H' + pin.name, sym: `H${pin.name}`, val: H, x: pin.x, dirn: 'h' });
+      const vp = { key: 'V' + pin.name, sym: `V${pin.name}`, val: Vp, x: pin.x, dirn: 'v' };
+      const vr = { key: 'V' + rol.name, sym: `V${rol.name}`, val: Vr, x: rol.x, dirn: 'v' };
+      if (first === pin) R.push(vp, vr); else R.push(vr, vp);
+      res.pin = pin; res.rol = rol; res.mLoads = mLoads;
+    }
+    res.R = R;
+    return res;
+  }
+
+  // ---------- drawing ----------
+  const NS = 'http://www.w3.org/2000/svg';
+  function svgEl(w, h) { return `<svg viewBox="0 0 ${w} ${h}" xmlns="${NS}" role="img" aria-label="Free body diagram of the beam">`; }
+  function arrowHead(x, y, ang, col, size = 11) {
+    const a1 = ang + Math.PI * 0.85, a2 = ang - Math.PI * 0.85;
+    return `<polygon points="${x},${y} ${x + size * Math.cos(a1)},${y + size * Math.sin(a1)} ${x + size * Math.cos(a2)},${y + size * Math.sin(a2)}" fill="${col}"/>`;
+  }
+  function arrow(x1, y1, x2, y2, col, w = 2.6) {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const bx = x2 - 9 * Math.cos(ang), by = y2 - 9 * Math.sin(ang);
+    return `<line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>` + arrowHead(x2, y2, ang, col);
+  }
+  function text(x, y, s, col, opts = {}) {
+    const anchor = opts.anchor || 'middle', size = opts.size || 15, weight = opts.weight || 600;
+    return `<text x="${x}" y="${y}" fill="${col}" font-family="Barlow, Arial, sans-serif" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" dominant-baseline="middle" paint-order="stroke" stroke="var(--sheet)" stroke-width="4" stroke-linejoin="round">${esc(s)}</text>`;
+  }
+  function arc(cx, cy, r, ccw, col) {
+    // three-quarter arc with arrow head
+    const a0 = ccw ? -0.75 * Math.PI : -0.25 * Math.PI, a1 = ccw ? 0.75 * Math.PI : 1.25 * Math.PI;
+    const pts = [];
+    const n = 24;
+    for (let i = 0; i <= n; i++) {
+      const t = ccw ? a0 + (a1 - a0) * i / n : a0 - (a0 - (-1.25 * Math.PI)) * i / n;
+      pts.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
+    }
+    // screen y is down: anticlockwise on screen means angle decreasing
+    const ptsS = [];
+    for (let i = 0; i <= n; i++) {
+      const t = (-0.15 * Math.PI) - (ccw ? 1 : -1) * 1.5 * Math.PI * i / n;
+      ptsS.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
+    }
+    const d = 'M' + ptsS.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
+    const [ex, ey] = ptsS[n], [px, py] = ptsS[n - 2];
+    return `<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4"/>` + arrowHead(ex, ey, Math.atan2(ey - py, ex - px), col, 12);
+  }
+
+  function drawFBD(res) {
+    const W = 1000, H = 400, x0 = 110, x1 = 890, yb = 190, th = 14;
+    const col = getComputedStyle(document.documentElement);
+    const C = (n) => col.getPropertyValue(n).trim();
+    const LOAD = C('--load'), REACT = C('--react'), DIM = C('--dim'), INK = C('--ink'), BEAM = C('--beam'), SOFT = C('--ink-soft');
+    const L = res.L;
+    const X = (x) => x0 + (x1 - x0) * x / L;
+    let s = svgEl(W, H);
+    // beam
+    s += `<rect x="${x0}" y="${yb - th / 2}" width="${x1 - x0}" height="${th}" fill="${BEAM}" stroke="${INK}" stroke-width="1.6" rx="2"/>`;
+    // supports
+    state.sup.forEach((sp, i) => {
+      if (sp.type === 'none' || sp.x < 0 || sp.x > L) return;
+      const name = i === 0 ? 'A' : 'B', x = X(sp.x), yt = yb + th / 2;
+      if (sp.type === 'pin' || sp.type === 'roller') {
+        const h = sp.type === 'pin' ? 30 : 24;
+        s += `<polygon points="${x},${yt} ${x - 16},${yt + h} ${x + 16},${yt + h}" fill="var(--sheet)" stroke="${INK}" stroke-width="1.6"/>`;
+        let gy = yt + h;
+        if (sp.type === 'roller') { s += `<circle cx="${x - 8}" cy="${gy + 6}" r="5" fill="var(--sheet)" stroke="${INK}" stroke-width="1.4"/><circle cx="${x + 8}" cy="${gy + 6}" r="5" fill="var(--sheet)" stroke="${INK}" stroke-width="1.4"/>`; gy += 11; }
+        s += `<line x1="${x - 24}" y1="${gy}" x2="${x + 24}" y2="${gy}" stroke="${INK}" stroke-width="1.6"/>`;
+        for (let k = -24; k < 24; k += 8) s += `<line x1="${x + k}" y1="${gy}" x2="${x + k + 7}" y2="${gy + 8}" stroke="${INK}" stroke-width="1"/>`;
+      } else {
+        const left = sp.x <= L / 2, wx = x + (left ? -0 : 0);
+        s += `<line x1="${wx}" y1="${yb - 40}" x2="${wx}" y2="${yb + 40}" stroke="${INK}" stroke-width="3"/>`;
+        for (let k = -40; k < 40; k += 9) s += `<line x1="${wx}" y1="${yb + k}" x2="${wx + (left ? -10 : 10)}" y2="${yb + k + 9}" stroke="${INK}" stroke-width="1"/>`;
+      }
+      s += text(x + (sp.type === 'fixed' ? (sp.x <= L / 2 ? -24 : 24) : -24), yb - 26, name, INK, { size: 17, weight: 700 });
+    });
+    // loads
+    state.loads.forEach((l) => {
+      if (l.kind === 'point') {
+        if (l.x < 0 || l.x > L) return;
+        const t = l.ang * Math.PI / 180, dx = Math.sin(t), dy = Math.cos(t);
+        const len = 78, x = X(l.x);
+        const hx = x, hy = dy >= 0 ? yb - th / 2 - 2 : yb + th / 2 + 2;
+        const tx = hx - len * dx, ty = hy - len * dy;
+        s += arrow(tx, ty, hx, hy, LOAD);
+        const lab = `${f(l.P)} kN` + (Math.abs(l.ang) > 0.01 ? ` (${f(l.ang, 1)}°)` : '');
+        s += text(tx + (dx > 0.05 ? -8 : dx < -0.05 ? 8 : 0), ty + (dy >= 0 ? -14 : 14), lab, LOAD, { anchor: dx > 0.05 ? 'end' : dx < -0.05 ? 'start' : 'middle' });
+      } else if (l.kind === 'udl') {
+        const a = Math.max(0, Math.min(l.a, l.b)), b = Math.min(L, Math.max(l.a, l.b));
+        if (b <= a) return;
+        const xa = X(a), xb = X(b), top = yb - th / 2 - 46;
+        s += `<line x1="${xa}" y1="${top}" x2="${xb}" y2="${top}" stroke="${LOAD}" stroke-width="2"/>`;
+        const n = Math.max(2, Math.round((xb - xa) / 34));
+        for (let k = 0; k <= n; k++) { const xx = xa + (xb - xa) * k / n; s += arrow(xx, top, xx, yb - th / 2 - 2, LOAD, 1.6); }
+        s += text((xa + xb) / 2, top - 14, `${f(l.w)} kN/m`, LOAD);
+      } else {
+        if (l.x < 0 || l.x > L) return;
+        const x = X(l.x);
+        s += arc(x, yb, 30, l.dir === 'ccw', LOAD);
+        s += text(x, yb - 48, `${f(l.M)} kN·m ${l.dir === 'ccw' ? '↺' : '↻'}`, LOAD);
+      }
+    });
+    // reactions
+    const quiz = $('quiz').checked && !quizRevealed;
+    if (res.ok) {
+      res.R.forEach((R) => {
+        const x = X(R.x);
+        const mag = Math.abs(R.val);
+        const val = quiz ? '?' : `${f(mag)}`;
+        if (R.dirn === 'v') {
+          if (mag < 1e-9 && !quiz) { s += text(x, yb + 120, `${R.sym} = 0`, REACT); return; }
+          const up = R.val >= 0 || quiz;
+          const yTop = yb + th / 2 + 50, yBot = yb + th / 2 + 120;
+          s += up ? arrow(x, yBot, x, yTop, REACT, 3) : arrow(x, yTop, x, yBot, REACT, 3);
+          s += text(x, yBot + 18, `${R.sym} = ${val} kN${!up ? ' ↓' : ''}`, REACT, { size: 16, weight: 700 });
+        } else if (R.dirn === 'h') {
+          if (mag < 1e-9 && !quiz) { s += text(x - 70, yb + 46, `${R.sym} = 0`, REACT); return; }
+          const right = R.val >= 0;
+          const y = yb + 34, xa = x - 80, xb = x - 22;
+          s += (right && !quiz) ? arrow(xa, y, xb, y, REACT, 3) : arrow(xb, y, xa, y, REACT, 3);
+          s += text(xa - 6, y, `${R.sym} = ${val} kN`, REACT, { anchor: 'end', size: 16, weight: 700 });
+        } else {
+          const ccw = R.val >= 0 || quiz;
+          s += arc(x + (R.x <= L / 2 ? -46 : 46), yb, 26, ccw, REACT);
+          s += text(x + (R.x <= L / 2 ? -46 : 46), yb - 46, `${R.sym} = ${val} kN·m ${quiz ? '' : (ccw ? '↺' : '↻')}`, REACT, { size: 16, weight: 700, anchor: R.x <= L / 2 ? 'middle' : 'middle' });
+        }
+      });
+    }
+    // dimension line
+    const pts = new Set([0, L]);
+    state.sup.forEach((sp) => { if (sp.type !== 'none' && sp.x >= 0 && sp.x <= L) pts.add(+sp.x); });
+    state.loads.forEach((l) => { if (l.kind === 'udl') { pts.add(Math.max(0, Math.min(l.a, l.b))); pts.add(Math.min(L, Math.max(l.a, l.b))); } else if (l.x >= 0 && l.x <= L) pts.add(+l.x); });
+    const xs = [...pts].sort((a, b) => a - b);
+    const yd = H - 34;
+    s += `<line x1="${X(0)}" y1="${yd}" x2="${X(L)}" y2="${yd}" stroke="${DIM}" stroke-width="1.2"/>`;
+    xs.forEach((p) => { s += `<line x1="${X(p)}" y1="${yd - 7}" x2="${X(p)}" y2="${yd + 7}" stroke="${DIM}" stroke-width="1.2"/>`; });
+    for (let k = 0; k < xs.length - 1; k++) { const d = xs[k + 1] - xs[k]; if (d > 1e-9) s += text((X(xs[k]) + X(xs[k + 1])) / 2, yd + 18, `${f(d)} m`, DIM, { size: 14, weight: 500 }); }
+    s += '</svg>';
+    $('fbd').innerHTML = s;
+  }
+
+  // ---------- shear and moment ----------
+  function sectionAt(x, res) {
+    // sum of everything strictly left of x
+    let V = 0, M = 0;
+    const pf = [];
+    res.forces.forEach((F) => { if (F.src.kind !== 'udl') pf.push({ x: F.x, Fy: F.Fy }); });
+    res.R.forEach((R) => { if (R.dirn === 'v') pf.push({ x: R.x, Fy: R.val }); });
+    pf.forEach((p) => { if (p.x < x) { V += p.Fy; M += p.Fy * (x - p.x); } });
+    state.loads.forEach((l) => {
+      if (l.kind === 'udl') {
+        const a = Math.min(l.a, l.b), b = Math.max(l.a, l.b);
+        const e = Math.min(Math.max(x, a), b), len = e - a;
+        if (len > 0) { V -= l.w * len; M -= l.w * len * (x - (a + len / 2)); }
+      } else if (l.kind === 'moment' && l.x < x) { M -= (l.dir === 'ccw' ? l.M : -l.M); }
+    });
+    res.R.forEach((R) => { if (R.dirn === 'm' && R.x < x) M -= R.val; });
+    return { V, M };
+  }
+  function drawDiagram(res, which, el) {
+    const W = 1000, H = 230, x0 = 110, x1 = 890, L = res.L;
+    const X = (x) => x0 + (x1 - x0) * x / L;
+    const cs = getComputedStyle(document.documentElement), C = (n) => cs.getPropertyValue(n).trim();
+    const colr = which === 'V' ? C('--dim') : C('--load'), INK = C('--ink'), SOFT = C('--ink-soft');
+    const keys = new Set([0, L]);
+    state.sup.forEach((s) => s.type !== 'none' && keys.add(+s.x));
+    state.loads.forEach((l) => { if (l.kind === 'udl') { keys.add(+l.a); keys.add(+l.b); } else keys.add(+l.x); });
+    const samples = [];
+    const N = 400, eps = L * 1e-6;
+    const xsAll = [];
+    for (let i = 0; i <= N; i++) xsAll.push(L * i / N);
+    keys.forEach((k) => { if (k >= 0 && k <= L) { xsAll.push(Math.max(0, k - eps), Math.min(L, k + eps)); } });
+    xsAll.sort((a, b) => a - b);
+    xsAll.forEach((x) => { const xx = x === 0 ? eps : x === L ? L - eps : x; const v = sectionAt(xx, res); samples.push([x, which === 'V' ? v.V : v.M]); });
+    const vals = samples.map((p) => p[1]);
+    let mx = Math.max(...vals.map(Math.abs), 1e-6);
+    const yz = H / 2 + 6, amp = (H / 2 - 40);
+    const Y = (v) => yz - v / mx * amp;
+    let d = `M${X(0)} ${yz} ` + samples.map(([x, v]) => `L${X(x).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ') + ` L${X(L)} ${yz} Z`;
+    let s = svgEl(W, H).replace('Free body diagram of the beam', which === 'V' ? 'Shear force diagram' : 'Bending moment diagram');
+    s += `<path d="${d}" fill="${colr}" fill-opacity="0.16" stroke="${colr}" stroke-width="2"/>`;
+    s += `<line x1="${x0}" y1="${yz}" x2="${x1}" y2="${yz}" stroke="${INK}" stroke-width="1.2"/>`;
+    s += text(x0 - 12, 22, which === 'V' ? 'Shear force (kN)' : 'Bending moment (kN·m)', INK, { anchor: 'start', size: 15, weight: 700 });
+    // label max and min
+    let iMax = 0, iMin = 0;
+    vals.forEach((v, i) => { if (v > vals[iMax]) iMax = i; if (v < vals[iMin]) iMin = i; });
+    const lab = (i) => { const [x, v] = samples[i]; if (Math.abs(v) < 1e-6) return ''; return text(X(x), Y(v) + (v >= 0 ? -14 : 16), `${f(v)} at ${f(x)} m`, colr, { size: 14 }); };
+    s += lab(iMax); if (iMin !== iMax) s += lab(iMin);
+    s += '</svg>';
+    el.innerHTML = s;
+  }
+
+  // ---------- working text ----------
+  function dirWord(Fy) { return Fy < 0 ? 'down' : 'up'; }
+  function working(res) {
+    const steps = [];
+    const add = (title, html) => steps.push({ title, html });
+    const { forces, couples } = res;
+    const udls = state.loads.filter((l) => l.kind === 'udl');
+    const slants = state.loads.filter((l) => l.kind === 'point' && Math.abs(l.ang) > 0.01 && Math.abs(Math.abs(l.ang) - 180) > 0.01);
+    if (udls.length) {
+      add('Turn each spread load into one arrow', `<p>A spread load acts like one force at its middle. Total = kN per metre × length.</p><div class="eq">${udls.map((l) => {
+        const a = Math.min(l.a, l.b), b = Math.max(l.a, l.b);
+        return `${f(l.w)} × ${f(b - a)} = <b>${f(l.w * (b - a))} kN</b> down, at ${f((a + b) / 2)} m`;
+      }).join('\n')}</div>`);
+    }
+    if (slants.length) {
+      add('Split each slanted load into down and sideways parts', `<p>Down part = P × cos(angle). Sideways part = P × sin(angle). The angle is measured from straight down.</p><div class="eq">${slants.map((l) => {
+        const t = l.ang * Math.PI / 180;
+        return `${f(l.P)} kN at ${f(l.ang, 2)}°:  down = ${f(l.P)} × ${f(Math.cos(t), 3)} = <b>${f(Math.abs(l.P * Math.cos(t)))} kN ${l.P * Math.cos(t) >= 0 ? '↓' : '↑'}</b>   sideways = ${f(l.P)} × ${f(Math.abs(Math.sin(t)), 3)} = <b>${f(Math.abs(l.P * Math.sin(t)))} kN ${Math.sin(t) >= 0 ? '→' : '←'}</b>`;
+      }).join('\n')}</div>`);
+    }
+    const sumFx = forces.reduce((t, F) => t + F.Fx, 0);
+    const sumFy = forces.reduce((t, F) => t + F.Fy, 0);
+    const R = Object.fromEntries(res.R.map((r) => [r.dirn + (r.sym.slice(1)), r]));
+    if (res.fixed) {
+      const s = res.fixed, n = s.name;
+      add('No sliding (ΣFx = 0)', `<p>The wall must cancel every sideways push.</p><div class="eq">H${n} + (${f(sumFx)}) = 0   →   <b>H${n} = ${f(Math.abs(sumFx))} kN${Math.abs(sumFx) < 1e-9 ? '' : (-sumFx >= 0 ? ' →' : ' ←')}</b>${Math.abs(sumFx) < 1e-9 ? '   (nothing pushes sideways)' : ''}</div>`);
+      add('Up equals down (ΣFy = 0)', `<p>The wall pushes up by the total of all the down parts.</p><div class="eq">V${n} = ${forces.map((F) => f(-F.Fy)).join(' + ') || '0'} = <b>${f(-sumFy)} kN ${-sumFy >= 0 ? '↑' : '↓'}</b></div>`);
+      const terms = forces.filter((F) => Math.abs(F.Fy) > 1e-12 && Math.abs(F.x - s.x) > 1e-12).map((F) => {
+        const m = F.Fy * (F.x - s.x);
+        return `${F.name} ${dirWord(F.Fy)}, ${f(Math.abs(F.x - s.x))} m ${F.x > s.x ? 'right' : 'left'} of ${n}:  ${f(Math.abs(F.Fy))} × ${f(Math.abs(F.x - s.x))} = ${f(Math.abs(m))}  ${m >= 0 ? 'anticlockwise' : 'clockwise'}`;
+      });
+      couples.forEach((c) => terms.push(`twist: ${f(Math.abs(c.C))}  ${c.C >= 0 ? 'anticlockwise' : 'clockwise'} (a twist has no distance)`));
+      const tot = forces.reduce((t, F) => t + F.Fy * (F.x - s.x), 0) + couples.reduce((t, c) => t + c.C, 0);
+      add(`No spinning (moments about ${n})`, `<p>Add up how hard each load tries to spin the beam about the wall. The wall twists back by the same amount the other way.</p><div class="eq">${terms.join('\n') || 'no turning loads'}\nTotal turning = ${f(Math.abs(tot))} ${tot >= 0 ? 'anticlockwise' : 'clockwise'}\n<b>M${n} = ${f(Math.abs(tot))} kN·m ${-tot >= 0 ? 'anticlockwise ↺' : 'clockwise ↻'}</b></div>`);
+      return steps;
+    }
+    const p = res.pin, r = res.rol;
+    add('No sliding (ΣFx = 0)', `<p>The roller can only push up and down, so the pin at ${p.name} takes all the sideways push.</p><div class="eq">H${p.name} + (${f(sumFx)}) = 0   →   <b>H${p.name} = ${f(Math.abs(sumFx))} kN${Math.abs(sumFx) < 1e-9 ? '' : (-sumFx >= 0 ? ' →' : ' ←')}</b>${Math.abs(sumFx) < 1e-9 ? '   (nothing pushes sideways)' : ''}</div>`);
+    const terms = forces.filter((F) => Math.abs(F.Fy) > 1e-12).map((F) => {
+      const d = F.x - p.x, m = F.Fy * d;
+      if (Math.abs(d) < 1e-12) return `${F.name} acts right at ${p.name}: no turning`;
+      return `${F.name} ${dirWord(F.Fy)}, ${f(Math.abs(d))} m ${d > 0 ? 'right' : 'left'} of ${p.name}:  ${f(Math.abs(F.Fy))} × ${f(Math.abs(d))} = ${f(Math.abs(m))}  ${m >= 0 ? 'anticlockwise (+)' : 'clockwise (−)'}`;
+    });
+    couples.forEach((c) => terms.push(`twist: ${f(Math.abs(c.C))}  ${c.C >= 0 ? 'anticlockwise (+)' : 'clockwise (−)'}   (a twist has no distance)`));
+    const span = r.x - p.x;
+    const Vr = res.R.find((x) => x.sym === 'V' + r.name).val, Vp = res.R.find((x) => x.sym === 'V' + p.name).val;
+    add(`Find V${r.name} with moments about ${p.name}`, `<p>Take turning effects about the pin. H${p.name} and V${p.name} pass through ${p.name}, so they drop out. Sideways parts run along the beam, so they cannot turn it either.</p>
+      <div class="eq">${terms.join('\n') || 'no turning loads'}\nV${r.name} is ${f(Math.abs(span))} m ${span > 0 ? 'right' : 'left'} of ${p.name}.\n\nV${r.name} × ${f(span)} + (${f(res.mLoads)}) = 0\n<b>V${r.name} = ${f(Math.abs(Vr))} kN ${Vr >= 0 ? '↑' : '↓ (it pulls down)'}</b></div>`);
+    add('Up equals down (ΣFy = 0)', `<div class="eq">V${p.name} + V${r.name} = total down = ${f(-sumFy)}\nV${p.name} = ${f(-sumFy)} − (${f(Vr)}) = <b>${f(Math.abs(Vp))} kN ${Vp >= 0 ? '↑' : '↓ (it pulls down)'}</b></div>`);
+    const chk = forces.reduce((t, F) => t + F.Fy * (F.x - r.x), 0) + couples.reduce((t, c) => t + c.C, 0) + Vp * (p.x - r.x);
+    add(`Check with moments about ${r.name}`, `<p>Every turning effect about the roller, including V${p.name}, should add to zero.</p><div class="eq">sum of moments about ${r.name} = ${f(chk, 4)}   ${Math.abs(chk) < 1e-6 ? '✓ balanced' : '✗ something is off'}</div>`);
+    if (Vp < -1e-9 || Vr < -1e-9) add('Why is one reaction negative?', `<p>A negative answer means that support has to pull the beam down instead of pushing it up. This happens when a heavy load on an overhang tries to lift the other end, like someone sitting on the end of a seesaw.</p>`);
+    return steps;
+  }
+
+  // ---------- answers / quiz ----------
+  function renderAnswers(res) {
+    const quiz = $('quiz').checked;
+    $('quizBtns').hidden = !quiz || !res.ok;
+    $('quizNote').hidden = !quiz || !res.ok;
+    if (!res.ok) { $('answers').innerHTML = '<p class="note">No reactions to show until the beam is determinate and stable.</p>'; return; }
+    $('answers').innerHTML = res.R.map((R) => {
+      const unit = R.dirn === 'm' ? 'kN·m' : 'kN';
+      const dir = R.dirn === 'v' ? (R.val >= 0 ? 'pushes up ↑' : 'pulls down ↓') : R.dirn === 'h' ? (Math.abs(R.val) < 1e-9 ? 'no sideways push' : R.val > 0 ? 'pushes right →' : 'pushes left ←') : (R.val >= 0 ? 'anticlockwise ↺' : 'clockwise ↻');
+      if (quiz && !quizRevealed) {
+        return `<div class="ans"><span class="k">${R.sym} (${unit})</span><input type="number" step="any" id="q_${R.sym}" aria-label="Your answer for ${R.sym}" placeholder="e.g. 12.5"><span class="mark" id="m_${R.sym}" aria-live="polite"></span></div>`;
+      }
+      return `<div class="ans"><span class="k">${R.sym}</span><span class="v">${f(Math.abs(R.val))} ${unit}</span><span class="d">${dir}</span></div>`;
+    }).join('');
+  }
+
+  function check(res) {
+    let all = true;
+    res.R.forEach((R) => {
+      const inp = $('q_' + R.sym), mk = $('m_' + R.sym);
+      if (!inp) return;
+      const v = parseFloat(inp.value);
+      const tol = Math.max(0.02, Math.abs(R.val) * 0.01);
+      if (!isFinite(v)) { mk.textContent = 'Enter a number'; mk.className = 'mark wrong'; all = false; return; }
+      if (Math.abs(v - R.val) <= tol) { mk.textContent = 'Right'; mk.className = 'mark right'; }
+      else if (Math.abs(v + R.val) <= tol) { mk.textContent = 'Right size, wrong sign'; mk.className = 'mark wrong'; all = false; }
+      else { mk.textContent = 'Not yet. Try again'; mk.className = 'mark wrong'; all = false; }
+    });
+    return all;
+  }
+
+  // ---------- update ----------
+  let last = null;
+  function update() {
+    state.L = num($('L').value, state.L);
+    const res = analyse();
+    last = res;
+    const st = $('status');
+    st.className = 'status ' + res.kind;
+    st.innerHTML = `${esc(res.status)}<small>${esc(res.detail)}</small>`;
+    drawFBD(res);
+    renderAnswers(res);
+    const quiz = $('quiz').checked && !quizRevealed;
+    $('workingWrap').hidden = !res.ok || quiz;
+    if (res.ok && !quiz) {
+      $('working').innerHTML = working(res).map((s, i) => `<div class="step"><div class="n">${i + 1}</div><div style="min-width:0"><h3>${s.title}</h3>${s.html}</div></div>`).join('');
+    }
+    const showD = $('diag').checked && res.ok && !quiz;
+    $('diagrams').hidden = !showD;
+    if (showD) { drawDiagram(res, 'V', $('sfd')); drawDiagram(res, 'M', $('bmd')); }
+  }
+
+  // ---------- wire up ----------
+  buildExamples();
+  renderControls();
+  $('L').addEventListener('input', () => { quizRevealed = false; update(); });
+  $('addPoint').addEventListener('click', () => { state.loads.push({ kind: 'point', P: 10, x: +(state.L / 2).toFixed(1), ang: 0 }); renderControls(); update(); });
+  $('addUdl').addEventListener('click', () => { state.loads.push({ kind: 'udl', w: 2, a: 0, b: +state.L }); renderControls(); update(); });
+  $('addMoment').addEventListener('click', () => { state.loads.push({ kind: 'moment', M: 10, x: +(state.L / 2).toFixed(1), dir: 'cw' }); renderControls(); update(); });
+  $('quiz').addEventListener('change', () => { quizRevealed = false; update(); });
+  $('diag').addEventListener('change', update);
+  $('checkBtn').addEventListener('click', () => { if (last && last.ok) check(last); });
+  $('revealBtn').addEventListener('click', () => { quizRevealed = true; update(); });
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', update);
+  new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  update();
+})();
+</script>
+
+</body>
+</html>
