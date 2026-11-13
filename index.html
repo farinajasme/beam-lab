@@ -109,7 +109,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
       <p>Set the supports and loads. See the reactions and the full working. Turn on “Quiz me” to try it yourself first.</p>
     </div>
     <div class="example-pick">
-      <label for="example">Start from a tutorial question</label>
+      <label for="example">Choose a beam type</label>
       <select id="example"></select>
     </div>
   </div>
@@ -188,13 +188,13 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
   const SUP = { none: { label: 'None', r: 0 }, pin: { label: 'Pin', r: 2 }, roller: { label: 'Roller', r: 1 }, fixed: { label: 'Fixed (wall)', r: 3 } };
 
   const EXAMPLES = [
-    { name: 'Simply supported, one load (P1)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 24, x: 3, ang: 0 }] },
-    { name: 'Overhangs both ends (21A-2)', L: 14, sup: [{ type: 'pin', x: 2 }, { type: 'roller', x: 12 }], loads: [{ kind: 'point', P: 4, x: 0, ang: 0 }, { kind: 'point', P: 18, x: 6, ang: 0 }, { kind: 'point', P: 10, x: 9, ang: 0 }, { kind: 'point', P: 8, x: 14, ang: 0 }] },
-    { name: 'Spread load and overhang (P3)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 6 }], loads: [{ kind: 'udl', w: 3, a: 0, b: 6 }, { kind: 'point', P: 10, x: 8, ang: 0 }] },
-    { name: 'Slanted 3-4-5 load (21B-A)', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 25, x: 3, ang: 36.87 }, { kind: 'point', P: 10, x: 5, ang: 0 }] },
-    { name: 'Cantilever with slanted load (21B-B)', L: 4, sup: [{ type: 'fixed', x: 0 }, { type: 'none', x: 4 }], loads: [{ kind: 'point', P: 6, x: 2, ang: 0 }, { kind: 'point', P: 15, x: 4, ang: 36.87 }] },
-    { name: 'Beam with a twist (Q6)', L: 10, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 10 }], loads: [{ kind: 'moment', M: 20, x: 4, dir: 'cw' }, { kind: 'point', P: 8, x: 6, ang: 0 }] },
-    { name: 'Steep 5-12-13 load (Q7)', L: 9, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 9 }], loads: [{ kind: 'point', P: 26, x: 3, ang: 22.62 }] },
+    { name: 'Simply supported beam', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 24, x: 3, ang: 0 }] },
+    { name: 'Beam overhanging both supports', L: 14, sup: [{ type: 'pin', x: 2 }, { type: 'roller', x: 12 }], loads: [{ kind: 'point', P: 4, x: 0, ang: 0 }, { kind: 'point', P: 18, x: 6, ang: 0 }, { kind: 'point', P: 10, x: 9, ang: 0 }, { kind: 'point', P: 8, x: 14, ang: 0 }] },
+    { name: 'Overhanging beam with a UDL', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 6 }], loads: [{ kind: 'udl', w: 3, a: 0, b: 6 }, { kind: 'point', P: 10, x: 8, ang: 0 }] },
+    { name: 'Simply supported beam with an inclined load', L: 8, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 8 }], loads: [{ kind: 'point', P: 25, x: 3, ang: 36.87 }, { kind: 'point', P: 10, x: 5, ang: 0 }] },
+    { name: 'Cantilever beam', L: 4, sup: [{ type: 'fixed', x: 0 }, { type: 'none', x: 4 }], loads: [{ kind: 'point', P: 6, x: 2, ang: 0 }, { kind: 'point', P: 15, x: 4, ang: 36.87 }] },
+    { name: 'Simply supported beam with a couple', L: 10, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 10 }], loads: [{ kind: 'moment', M: 20, x: 4, dir: 'cw' }, { kind: 'point', P: 8, x: 6, ang: 0 }] },
+    { name: 'Simply supported beam with a steep inclined load', L: 9, sup: [{ type: 'pin', x: 0 }, { type: 'roller', x: 9 }], loads: [{ kind: 'point', P: 26, x: 3, ang: 22.62 }] },
   ];
 
   let state = clone(EXAMPLES[0]);
@@ -210,7 +210,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
   // ---------- controls ----------
   function buildExamples() {
     const sel = $('example');
-    sel.innerHTML = '<option value="">Choose an example…</option>' + EXAMPLES.map((e, i) => `<option value="${i}">${esc(e.name)}</option>`).join('');
+    sel.innerHTML = '<option value="">Choose…</option>' + EXAMPLES.map((e, i) => `<option value="${i}">${esc(e.name)}</option>`).join('');
     sel.addEventListener('change', () => { if (sel.value !== '') { state = clone(EXAMPLES[+sel.value]); quizRevealed = false; renderControls(); update(); } });
   }
 
