@@ -1,155 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BIB2017 Beam Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: drafting-sheet tool. Controls rail on the left, the free body diagram and working on the right; stacks on phones. */
+/* Layout: the BIB2017 slide template as a web page. White page, navy titles, tinted cards with coloured top rules, grey footer. Single light theme on purpose, matching the slides. */
 :root {
-  --paper: #f3f5f7;
-  --sheet: #ffffff;
-  --ink: #14213d;
-  --ink-soft: #4a5568;
-  --rule: #d5dce5;
-  --grid: #e8edf2;
+  --white: #ffffff;
+  --page: #ffffff;
+  --tint: #eef2f8;
+  --tint2: #dde5f1;
+  --line: #c9d3e3;
   --navy: #002060;
-  --load: #c0392b;
-  --react: #1b8a3a;
+  --red: #c00000;
+  --gold: #f6cc18;
+  --green: #1b7a3a;
+  --ink: #1f2937;
+  --muted: #4b5563;
+  --load: #c00000;
+  --react: #1b7a3a;
   --dim: #2563eb;
   --beam: #c9d3e3;
-  --warn-bg: #fff4e5;
-  --warn-ink: #8a4b00;
-  --bad-bg: #fdecea;
-  --bad-ink: #9b1c1c;
-  --good-bg: #e8f5ec;
-  --good-ink: #1b6b33;
-  --field: #f7f9fb;
-  --font-display: "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
-  --font-body: "Barlow", Arial, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0f1622; --sheet: #172131; --ink: #e6ecf5; --ink-soft: #a9b6c8; --rule: #2c3a50; --grid: #1f2b3d;
-    --navy: #9cb8ff; --load: #ff7b6b; --react: #4fd27a; --dim: #7fb0ff; --beam: #34445e;
-    --warn-bg: #3a2a12; --warn-ink: #ffcf8a; --bad-bg: #3d1a1a; --bad-ink: #ffb4ab; --good-bg: #133222; --good-ink: #8fe3a9;
-    --field: #111a28; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #0f1622; --sheet: #172131; --ink: #e6ecf5; --ink-soft: #a9b6c8; --rule: #2c3a50; --grid: #1f2b3d;
-  --navy: #9cb8ff; --load: #ff7b6b; --react: #4fd27a; --dim: #7fb0ff; --beam: #34445e;
-  --warn-bg: #3a2a12; --warn-ink: #ffcf8a; --bad-bg: #3d1a1a; --bad-ink: #ffb4ab; --good-bg: #133222; --good-ink: #8fe3a9;
-  --field: #111a28; color-scheme: dark;
+  --sheet: #ffffff;
+  --ink-soft: #4b5563;
+  --font: Arial, Helvetica, sans-serif;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
-body {
-  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 24px 48px;
-}
-.wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
-header h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); line-height: 1.05; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
-header p { margin: 4px 0 0; color: var(--ink-soft); max-width: 62ch; }
-.course { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
-.example-pick { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.grid { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+body { background: var(--page); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; padding-block: 0 32px; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.titlebar { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 28px; padding-top: 28px; }
+.titlebar h1 { font-size: clamp(26px, 3.4vw, 34px); color: var(--navy); font-weight: 700; margin: 0; line-height: 1.15; text-wrap: balance; }
+.titlebar p { margin: 6px 0 0; color: var(--ink); max-width: 64ch; }
+.course { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+.example-pick { display: flex; flex-direction: column; gap: 6px; min-width: 0; width: min(100%, 340px); }
+.grid { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 18px; align-items: start; }
 @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
-.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.panel h2 { font-family: var(--font-display); font-size: 20px; margin: 0; letter-spacing: 0.02em; }
-.eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+.panel { background: var(--white); display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.panel h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin: 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); }
+label { font-size: 13px; font-weight: 700; color: var(--muted); }
 input, select, button { font: inherit; color: var(--ink); }
-input[type=number], select {
-  background: var(--field); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; width: 100%; min-width: 0;
-  font-family: var(--font-mono); font-size: 14px;
-}
-select { font-family: var(--font-body); font-size: 15px; }
-input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--dim); outline-offset: 2px; }
+input[type=number], select { background: var(--white); border: 1px solid var(--line); border-radius: 4px; padding: 7px 9px; width: 100%; min-width: 0; font-size: 14px; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
 .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
-.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.sup { border: 1px solid var(--rule); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.sup-head { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-.badge { font-family: var(--font-mono); font-size: 12px; background: var(--grid); border-radius: 4px; padding: 1px 6px; }
-.load { border: 1px solid var(--rule); border-left: 4px solid var(--load); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-.load-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; color: var(--load); }
-.btn { border: 1px solid var(--rule); background: var(--field); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
-.btn:hover { border-color: var(--ink-soft); }
-.btn.primary { background: var(--navy); color: var(--sheet); border-color: var(--navy); }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.card { background: var(--tint); border-radius: 6px; border-top: 4px solid var(--navy); box-shadow: 0 1px 3px rgba(0, 32, 96, 0.18); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card.red { border-top-color: var(--red); }
+.card.gold { border-top-color: var(--gold); }
+.card.green { border-top-color: var(--green); }
+.sup { background: var(--white); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.sup-head { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--navy); }
+.badge { font-size: 13px; font-weight: 700; background: var(--navy); color: var(--white); width: 24px; height: 24px; display: inline-grid; place-items: center; border-radius: 3px; }
+.load { background: var(--white); border-radius: 4px; border-left: 4px solid var(--red); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.load-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; color: var(--red); }
+.btn { border: 1px solid var(--navy); background: var(--white); color: var(--navy); border-radius: 4px; padding: 7px 12px; cursor: pointer; font-weight: 700; font-size: 14px; }
+.btn:hover { background: var(--tint2); }
+.btn.primary { background: var(--navy); color: var(--white); }
+.btn.primary:hover { background: #0b2f7a; }
 .btn.small { padding: 3px 8px; font-size: 12px; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.toggles { display: flex; flex-wrap: wrap; gap: 8px 18px; }
-.toggle { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--navy); cursor: pointer; }
 .toggle input { width: 18px; height: 18px; accent-color: var(--navy); }
-.status { border-radius: 8px; padding: 10px 14px; font-weight: 600; display: flex; flex-direction: column; gap: 2px; }
-.status small { font-weight: 400; }
-.status.ok { background: var(--good-bg); color: var(--good-ink); }
-.status.warn { background: var(--warn-bg); color: var(--warn-ink); }
-.status.bad { background: var(--bad-bg); color: var(--bad-ink); }
-.figure { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
+.status { border-radius: 6px; padding: 12px 16px; font-weight: 700; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0, 32, 96, 0.18); }
+.status small { font-weight: 400; font-size: 14px; }
+.status.ok { background: var(--navy); color: var(--white); }
+.status.ok small { color: #d6dff0; }
+.status.warn { background: #fff7d6; color: #6b4e00; border-top: 4px solid var(--gold); }
+.status.bad { background: #fdeaea; color: #8f1414; border-top: 4px solid var(--red); }
+.figure { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: 6px; }
 .figure svg { display: block; width: 100%; min-width: 680px; height: auto; }
-.answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.ans { border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
-.ans .k { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
-.ans .v { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--react); font-variant-numeric: tabular-nums; }
-.ans .d { font-size: 13px; color: var(--ink-soft); }
-.ans input { margin-top: 4px; }
-.ans .mark { font-size: 13px; font-weight: 700; }
-.ans .mark.right { color: var(--good-ink); }
-.ans .mark.wrong { color: var(--bad-ink); }
-.steps { display: flex; flex-direction: column; gap: 14px; }
-.step { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; }
-.step .n { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--sheet); display: grid; place-items: center; font-weight: 700; font-family: var(--font-mono); font-size: 13px; }
-.step h3 { margin: 2px 0 4px; font-size: 16px; }
-.step p { margin: 0 0 6px; color: var(--ink-soft); max-width: 70ch; }
-.eq { font-family: var(--font-mono); font-size: 14px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; overflow-x: auto; white-space: pre; line-height: 1.6; }
+.answers { width: 100%; border-collapse: collapse; font-size: 15px; }
+.answers th { background: var(--navy); color: var(--white); text-align: left; padding: 8px 12px; font-weight: 700; }
+.answers td { padding: 8px 12px; border-bottom: 1px solid var(--white); }
+.answers tr:nth-child(even) td { background: var(--tint); }
+.answers td.v { font-weight: 700; color: var(--react); font-variant-numeric: tabular-nums; font-size: 17px; white-space: nowrap; }
+.answers td input { max-width: 160px; }
+.answers .mark { font-size: 13px; font-weight: 700; display: block; margin-top: 4px; }
+.answers .mark.right { color: var(--green); }
+.answers .mark.wrong { color: var(--red); }
+.tablewrap { overflow-x: auto; }
+.steps { display: flex; flex-direction: column; gap: 12px; }
+.step { background: var(--tint); border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 32, 96, 0.18); padding: 12px 16px; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; }
+.step .n { color: var(--red); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; }
+.step h3 { margin: 1px 0 4px; font-size: 16px; color: var(--navy); }
+.step p { margin: 0 0 6px; color: var(--ink); max-width: 72ch; }
+.eq { font-family: var(--font); font-size: 14px; background: var(--white); border-radius: 4px; padding: 9px 12px; overflow-x: auto; white-space: pre; line-height: 1.7; }
 .eq b { color: var(--react); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-soft); }
-.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: currentColor; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 16px; height: 3px; margin-right: 6px; vertical-align: middle; background: currentColor; }
 .legend .l { color: var(--load); } .legend .r { color: var(--react); } .legend .d { color: var(--dim); }
-.note { font-size: 13px; color: var(--ink-soft); }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.foot { width: 100%; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 [hidden] { display: none !important; }
-@media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .15s; } }
 </style>
 
 </head>
 <body>
-<div class="wrap">
-  <header>
+<div class="wrap gutter">
+  <div class="titlebar">
     <div>
-      <div class="course">BIB2017 Structural Principle · Beam reactions</div>
-      <h1>Beam Lab</h1>
-      <p>Change the supports and loads, then see the reactions and the full working. Turn on “Quiz me” to try it yourself first.</p>
+      <div class="course">BIB2017 Structural Principle</div>
+      <h1>Beam Lab: reactions with full working</h1>
+      <p>Set the supports and loads. See the reactions and the full working. Turn on “Quiz me” to try it yourself first.</p>
     </div>
     <div class="example-pick">
       <label for="example">Start from a tutorial question</label>
       <select id="example"></select>
     </div>
-  </header>
-
+  </div>
   <div class="grid">
     <!-- CONTROLS -->
     <section class="panel" aria-label="Beam set-up">
-      <div class="field">
-        <span class="eyebrow">1 · Beam</span>
+      <h2>Set up the beam</h2>
+      <div class="card field">
+        <span class="eyebrow">01 · Beam</span>
         <label for="L">Length of the beam (m)</label>
         <input id="L" type="number" min="1" max="40" step="0.5">
       </div>
 
-      <div class="field">
-        <span class="eyebrow">2 · Supports</span>
+      <div class="card gold field">
+        <span class="eyebrow">02 · Supports</span>
         <div id="supports" class="steps" style="gap:10px"></div>
         <p class="note">Positions are measured in metres from the left end of the beam.</p>
       </div>
 
-      <div class="field">
-        <span class="eyebrow">3 · Loads</span>
+      <div class="card red field">
+        <span class="eyebrow">03 · Loads</span>
         <div id="loads" style="display:flex;flex-direction:column;gap:10px"></div>
         <div class="btn-row">
           <button class="btn" id="addPoint" type="button">+ Point load</button>
@@ -162,6 +143,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
 
     <!-- RESULTS -->
     <section class="panel" aria-label="Results">
+      <h2>Free body diagram</h2>
       <div class="toggles">
         <label class="toggle"><input type="checkbox" id="quiz"> Quiz me (hide the answers)</label>
         <label class="toggle"><input type="checkbox" id="diag"> Show shear force and bending moment (Week 8)</label>
@@ -176,7 +158,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
 
       <div>
         <h2 style="margin-bottom:10px">Reactions</h2>
-        <div class="answers" id="answers"></div>
+        <div class="tablewrap" id="answers"></div>
         <div class="btn-row" id="quizBtns" style="margin-top:10px" hidden>
           <button class="btn primary" type="button" id="checkBtn">Check my answers</button>
           <button class="btn" type="button" id="revealBtn">Show the working</button>
@@ -197,6 +179,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
       </div>
     </section>
   </div>
+  <div class="foot"><span>BIB2017 Structural Principle · Beam Lab · Sign rule: up +, right +, anticlockwise +. Units: kN and m.</span><span>Dr. Nurshafarina Jasme</span></div>
 </div>
 
 <script>
@@ -375,7 +358,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
   }
   function text(x, y, s, col, opts = {}) {
     const anchor = opts.anchor || 'middle', size = opts.size || 15, weight = opts.weight || 600;
-    return `<text x="${x}" y="${y}" fill="${col}" font-family="Barlow, Arial, sans-serif" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" dominant-baseline="middle" paint-order="stroke" stroke="var(--sheet)" stroke-width="4" stroke-linejoin="round">${esc(s)}</text>`;
+    return `<text x="${x}" y="${y}" fill="${col}" font-family="Arial, Helvetica, sans-serif" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" dominant-baseline="middle" paint-order="stroke" stroke="var(--sheet)" stroke-width="4" stroke-linejoin="round">${esc(s)}</text>`;
   }
   function arc(cx, cy, r, ccw, col) {
     // three-quarter arc with arrow head
@@ -465,11 +448,11 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
           s += up ? arrow(x, yBot, x, yTop, REACT, 3) : arrow(x, yTop, x, yBot, REACT, 3);
           s += text(x, yBot + 18, `${R.sym} = ${val} kN${!up ? ' ↓' : ''}`, REACT, { size: 16, weight: 700 });
         } else if (R.dirn === 'h') {
-          if (mag < 1e-9 && !quiz) { s += text(x - 70, yb + 46, `${R.sym} = 0`, REACT); return; }
+          if (mag < 1e-9 && !quiz) { s += text(Math.max(50, x - 50), yb + 46, `${R.sym} = 0`, REACT); return; }
           const right = R.val >= 0;
-          const y = yb + 34, xa = x - 80, xb = x - 22;
+          const y = yb + 34, xa = x - 100, xb = x - 26;
           s += (right && !quiz) ? arrow(xa, y, xb, y, REACT, 3) : arrow(xb, y, xa, y, REACT, 3);
-          s += text(xa - 6, y, `${R.sym} = ${val} kN`, REACT, { anchor: 'end', size: 16, weight: 700 });
+          s += text(Math.max(50, (xa + xb) / 2), y - 16, `${R.sym} = ${val} kN`, REACT, { size: 16, weight: 700 });
         } else {
           const ccw = R.val >= 0 || quiz;
           s += arc(x + (R.x <= L / 2 ? -46 : 46), yb, 26, ccw, REACT);
@@ -602,14 +585,16 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
     $('quizBtns').hidden = !quiz || !res.ok;
     $('quizNote').hidden = !quiz || !res.ok;
     if (!res.ok) { $('answers').innerHTML = '<p class="note">No reactions to show until the beam is determinate and stable.</p>'; return; }
-    $('answers').innerHTML = res.R.map((R) => {
+    const rows = res.R.map((R) => {
       const unit = R.dirn === 'm' ? 'kN·m' : 'kN';
       const dir = R.dirn === 'v' ? (R.val >= 0 ? 'pushes up ↑' : 'pulls down ↓') : R.dirn === 'h' ? (Math.abs(R.val) < 1e-9 ? 'no sideways push' : R.val > 0 ? 'pushes right →' : 'pushes left ←') : (R.val >= 0 ? 'anticlockwise ↺' : 'clockwise ↻');
       if (quiz && !quizRevealed) {
-        return `<div class="ans"><span class="k">${R.sym} (${unit})</span><input type="number" step="any" id="q_${R.sym}" aria-label="Your answer for ${R.sym}" placeholder="e.g. 12.5"><span class="mark" id="m_${R.sym}" aria-live="polite"></span></div>`;
+        return `<tr><td><b>${R.sym}</b> (${unit})</td><td><input type="number" step="any" id="q_${R.sym}" aria-label="Your answer for ${R.sym}" placeholder="e.g. 12.5"><span class="mark" id="m_${R.sym}" aria-live="polite"></span></td></tr>`;
       }
-      return `<div class="ans"><span class="k">${R.sym}</span><span class="v">${f(Math.abs(R.val))} ${unit}</span><span class="d">${dir}</span></div>`;
+      return `<tr><td><b>${R.sym}</b></td><td class="v">${f(Math.abs(R.val))} ${unit}</td><td>${dir}</td></tr>`;
     }).join('');
+    const head = (quiz && !quizRevealed) ? '<tr><th>Reaction</th><th>Your answer</th></tr>' : '<tr><th>Reaction</th><th>Value</th><th>Direction</th></tr>';
+    $('answers').innerHTML = `<table class="answers">${head}${rows}</table>`;
   }
 
   function check(res) {
@@ -641,7 +626,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
     const quiz = $('quiz').checked && !quizRevealed;
     $('workingWrap').hidden = !res.ok || quiz;
     if (res.ok && !quiz) {
-      $('working').innerHTML = working(res).map((s, i) => `<div class="step"><div class="n">${i + 1}</div><div style="min-width:0"><h3>${s.title}</h3>${s.html}</div></div>`).join('');
+      $('working').innerHTML = working(res).map((s, i) => `<div class="step"><div class="n">${String(i + 1).padStart(2, '0')}</div><div style="min-width:0"><h3>${s.title}</h3>${s.html}</div></div>`).join('');
     }
     const showD = $('diag').checked && res.ok && !quiz;
     $('diagrams').hidden = !showD;
